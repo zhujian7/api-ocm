@@ -185,7 +185,50 @@ type KlusterletSpec struct {
 	// NodePlacement enables explicit control over the scheduling of the deployed pods.
 	// +optional
 	NodePlacement NodePlacement `json:"nodePlacement,omitempty"`
+
+	// DeployOption contains the options of deploying a klusterlet
+	// +optional
+	DeployOption DeployOption `json:"deployOption,omitempty"`
 }
+
+// DeployOption describes the deploy options for cluster-manager or klusterlet
+type DeployOption struct {
+	// Mode can be Default or Detached.
+	//
+	// For cluster-manager: In Detached mode, hub hosting all deployments on another cluster.
+	// The purpose of Detached mode is to give it more flexibility, for example we can install a hub on a cluster with no worker nodes, meanwhile running all deployments on another more powerful cluster.
+	// The cluster installed with CRDs and services, we still call it hub-cluster.
+	// The cluster running all deployments, we call it management-cluster.
+	// In Detached mode, a ClusterManager is applied to a management-cluster, and it leverages a secret named "external-hub-kubeconfig" in the namespace with the same name of itself.
+	// "external-hub-kubeconfig" should contain the kubeconfig with admin permission of hub-cluster.
+	//
+	// For klusterlet: in Detached mode, all agent deployments for the managed cluster are deployed on another cluster.
+	// The cluster installed with CRDs and services, we still call it managed-cluster.
+	// The cluster running all deployments, we call it management-cluster.
+	// In Detached mode, a Klusterlet is applied to a management-cluster, and it leverages a secret named "external-managed-kubeconfig" in the namespace with the same name of itself.
+	// "external-managed-kubeconfig" should contain the kubeconfig with admin permission of managed-cluster.
+	//
+	// TODO: reduce the permission requirement for "external-*-kubeconfig", and develop a controller to generator kubeconfigs with different permission for different components.
+	//
+	// +required
+	// +kubebuilder:validation:Required
+	// +kubebuilder:default=Default
+	// +kubebuilder:validation:Enum=Default;Detached
+	Mode InstallMode `json:"mode"`
+}
+
+// InstallMode represents the mode of deploy cluster-manager or klusterlet
+type InstallMode string
+
+const (
+	// InstallModeDefault is the default deploy mode.
+	// The cluster-manager will be deployed in the hub-cluster, the klusterlet will be deployed in the managed-cluster.
+	InstallModeDefault InstallMode = "Default"
+
+	// InstallModeDetached means deploying components outside.
+	// The cluster-manager will be deployed outside of the hub-cluster, the klusterlet will be deployed outside of the managed-cluster.
+	InstallModeDetached InstallMode = "Detached"
+)
 
 // ServerURL represents the apiserver url and ca bundle that is accessible externally
 type ServerURL struct {

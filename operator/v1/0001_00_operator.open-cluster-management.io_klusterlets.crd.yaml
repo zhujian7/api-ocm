@@ -33,6 +33,19 @@ spec:
             clusterName:
               description: ClusterName is the name of the managed cluster to be created on hub. The Klusterlet agent generates a random name if it is not set, or discovers the appropriate cluster name on OpenShift.
               type: string
+            deployOption:
+              description: DeployOption contains the options of deploying a klusterlet
+              type: object
+              required:
+                - mode
+              properties:
+                mode:
+                  description: "Mode can be Default or Detached. \n For cluster-manager: In Detached mode, hub hosting all deployments on another cluster. The purpose of Detached mode is to give it more flexibility, for example we can install a hub on a cluster with no worker nodes, meanwhile running all deployments on another more powerful cluster. The cluster installed with CRDs and services, we still call it hub-cluster. The cluster running all deployments, we call it management-cluster. In Detached mode, a ClusterManager is applied to a management-cluster, and it leverages a secret named \"external-hub-kubeconfig\" in the namespace with the same name of itself. \"external-hub-kubeconfig\" should contain the kubeconfig with admin permission of hub-cluster. \n For klusterlet: in Detached mode, all agent deployments for the managed cluster are deployed on another cluster. The cluster installed with CRDs and services, we still call it managed-cluster. The cluster running all deployments, we call it management-cluster. In Detached mode, a Klusterlet is applied to a management-cluster, and it leverages a secret named \"external-managed-kubeconfig\" in the namespace with the same name of itself. \"external-managed-kubeconfig\" should contain the kubeconfig with admin permission of managed-cluster. \n TODO: reduce the permission requirement for \"external-*-kubeconfig\", and develop a controller to generator kubeconfigs with different permission for different components."
+                  type: string
+                  default: Default
+                  enum:
+                    - Default
+                    - Detached
             externalServerURLs:
               description: ExternalServerURLs represents the a list of apiserver urls and ca bundles that is accessible externally If it is set empty, managed cluster has no externally accessible url that hub cluster can visit.
               type: array

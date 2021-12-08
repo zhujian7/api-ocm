@@ -55,6 +55,15 @@ func (ClusterManagerStatus) SwaggerDoc() map[string]string {
 	return map_ClusterManagerStatus
 }
 
+var map_DeployOption = map[string]string{
+	"":     "DeployOption describes the deploy options for cluster-manager or klusterlet",
+	"mode": "Mode can be Default or Detached.\n\nFor cluster-manager: In Detached mode, hub hosting all deployments on another cluster. The purpose of Detached mode is to give it more flexibility, for example we can install a hub on a cluster with no worker nodes, meanwhile running all deployments on another more powerful cluster. The cluster installed with CRDs and services, we still call it hub-cluster. The cluster running all deployments, we call it management-cluster. In Detached mode, a ClusterManager is applied to a management-cluster, and it leverages a secret named \"external-hub-kubeconfig\" in the namespace with the same name of itself. \"external-hub-kubeconfig\" should contain the kubeconfig with admin permission of hub-cluster.\n\nFor klusterlet: in Detached mode, all agent deployments for the managed cluster are deployed on another cluster. The cluster installed with CRDs and services, we still call it managed-cluster. The cluster running all deployments, we call it management-cluster. In Detached mode, a Klusterlet is applied to a management-cluster, and it leverages a secret named \"external-managed-kubeconfig\" in the namespace with the same name of itself. \"external-managed-kubeconfig\" should contain the kubeconfig with admin permission of managed-cluster.",
+}
+
+func (DeployOption) SwaggerDoc() map[string]string {
+	return map_DeployOption
+}
+
 var map_GenerationStatus = map[string]string{
 	"":               "GenerationStatus keeps track of the generation for a given resource so that decisions about forced updates can be made. The definition matches the GenerationStatus defined in github.com/openshift/api/v1",
 	"group":          "group is the group of the resource that you're tracking",
@@ -97,6 +106,7 @@ var map_KlusterletSpec = map[string]string{
 	"clusterName":               "ClusterName is the name of the managed cluster to be created on hub. The Klusterlet agent generates a random name if it is not set, or discovers the appropriate cluster name on OpenShift.",
 	"externalServerURLs":        "ExternalServerURLs represents the a list of apiserver urls and ca bundles that is accessible externally If it is set empty, managed cluster has no externally accessible url that hub cluster can visit.",
 	"nodePlacement":             "NodePlacement enables explicit control over the scheduling of the deployed pods.",
+	"deployOption":              "DeployOption contains the options of deploying a klusterlet",
 }
 
 func (KlusterletSpec) SwaggerDoc() map[string]string {
