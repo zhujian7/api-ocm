@@ -12,6 +12,8 @@ type Interface interface {
 	AddOnDeploymentConfigs() AddOnDeploymentConfigInformer
 	// AddOnHubConfigs returns a AddOnHubConfigInformer.
 	AddOnHubConfigs() AddOnHubConfigInformer
+	// AddOnTemplates returns a AddOnTemplateInformer.
+	AddOnTemplates() AddOnTemplateInformer
 	// ClusterManagementAddOns returns a ClusterManagementAddOnInformer.
 	ClusterManagementAddOns() ClusterManagementAddOnInformer
 	// ManagedClusterAddOns returns a ManagedClusterAddOnInformer.
@@ -37,6 +39,11 @@ func (v *version) AddOnDeploymentConfigs() AddOnDeploymentConfigInformer {
 // AddOnHubConfigs returns a AddOnHubConfigInformer.
 func (v *version) AddOnHubConfigs() AddOnHubConfigInformer {
 	return &addOnHubConfigInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
+}
+
+// AddOnTemplates returns a AddOnTemplateInformer.
+func (v *version) AddOnTemplates() AddOnTemplateInformer {
+	return &addOnTemplateInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
 }
 
 // ClusterManagementAddOns returns a ClusterManagementAddOnInformer.

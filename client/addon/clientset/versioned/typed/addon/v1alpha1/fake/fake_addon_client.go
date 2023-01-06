@@ -20,6 +20,10 @@ func (c *FakeAddonV1alpha1) AddOnHubConfigs() v1alpha1.AddOnHubConfigInterface {
 	return &FakeAddOnHubConfigs{c}
 }
 
+func (c *FakeAddonV1alpha1) AddOnTemplates() v1alpha1.AddOnTemplateInterface {
+	return &FakeAddOnTemplates{c}
+}
+
 func (c *FakeAddonV1alpha1) ClusterManagementAddOns() v1alpha1.ClusterManagementAddOnInterface {
 	return &FakeClusterManagementAddOns{c}
 }

@@ -14,6 +14,10 @@ type AddOnDeploymentConfigNamespaceListerExpansion interface{}
 // AddOnHubConfigLister.
 type AddOnHubConfigListerExpansion interface{}
 
+// AddOnTemplateListerExpansion allows custom methods to be added to
+// AddOnTemplateLister.
+type AddOnTemplateListerExpansion interface{}
+
 // ClusterManagementAddOnListerExpansion allows custom methods to be added to
 // ClusterManagementAddOnLister.
 type ClusterManagementAddOnListerExpansion interface{}

@@ -41,6 +41,8 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Addon().V1alpha1().AddOnDeploymentConfigs().Informer()}, nil
 	case v1alpha1.SchemeGroupVersion.WithResource("addonhubconfigs"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Addon().V1alpha1().AddOnHubConfigs().Informer()}, nil
+	case v1alpha1.SchemeGroupVersion.WithResource("addontemplates"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Addon().V1alpha1().AddOnTemplates().Informer()}, nil
 	case v1alpha1.SchemeGroupVersion.WithResource("clustermanagementaddons"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Addon().V1alpha1().ClusterManagementAddOns().Informer()}, nil
 	case v1alpha1.SchemeGroupVersion.WithResource("managedclusteraddons"):

@@ -6,6 +6,8 @@ type AddOnDeploymentConfigExpansion interface{}
 
 type AddOnHubConfigExpansion interface{}
 
+type AddOnTemplateExpansion interface{}
+
 type ClusterManagementAddOnExpansion interface{}
 
 type ManagedClusterAddOnExpansion interface{}
