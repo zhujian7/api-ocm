@@ -145,3 +145,16 @@ type SigningCARef struct {
 	// +kubebuilder:validation:Required
 	Name string `json:"name"`
 }
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+// AddOnTemplateList is a collection of addon templates.
+type AddOnTemplateList struct {
+	metav1.TypeMeta `json:",inline"`
+	// Standard list metadata.
+	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
+	// +optional
+	metav1.ListMeta `json:"metadata,omitempty"`
+
+	// Items is a list of addon templates.
+	Items []AddOnTemplate `json:"items"`
+}

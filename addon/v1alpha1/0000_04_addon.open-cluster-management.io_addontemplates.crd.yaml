@@ -1,5 +1,3 @@
-
----
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -14,139 +12,108 @@ spec:
     singular: addontemplate
   scope: Cluster
   versions:
-  - additionalPrinterColumns:
-    - jsonPath: .spec.addonName
-      name: ADDON NAME
-      type: string
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        description: "AddOnTemplate is the Custom Resource object, it is used to describe
-          how to deploy the addon agent and how to register the addon. \n AddOnTemplate
-          is a cluster-scoped resource, and will only be used on the hub cluster."
-        properties:
-          apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
-            type: string
-          kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
-            type: string
-          metadata:
-            type: object
-          spec:
-            description: spec holds the registration configuration for the addon and
-              the addon agent resources yaml description.
-            properties:
-              addonName:
-                description: AddonName represents the name of the addon which the
-                  template belongs to
-                type: string
-              agentManifests:
-                description: AgentManifests represents the kubernetes resources of
-                  the addon agent to be deployed on a managed cluster.
-                items:
-                  description: Manifest represents a resource to be deployed on the
-                    managed cluster.
-                  type: object
-                  x-kubernetes-embedded-resource: true
-                  x-kubernetes-preserve-unknown-fields: true
-                type: array
-              registration:
-                description: Registration holds the registration configuration for
-                  the addon
-                items:
-                  description: RegistrationSpec describes how to register an addon
-                    agent to the hub cluster. With the registration defined, The addon
-                    agent can access to kube apiserver with kube style API or other
-                    endpoints on hub cluster with client certificate authentication.
-                    During the addon registration process, a csr will be created for
-                    each RegistrationSpec on the hub cluster. The CSR can be approved
-                    automatically(Auto) or manually(None), After the csr is approved
-                    on the hub cluster, the klusterlet agent will create a secret
-                    in the installNamespace for the addon agent. If the RegistrationType
-                    type is KubeClient, the secret name will be "{addon name}-hub-kubeconfig"
-                    whose content includes key/cert and kubeconfig. Otherwise, If
-                    the RegistrationType type is CustomSigner the secret name will
-                    be "{addon name}-{signer name}-client-cert" whose content includes
-                    key/cert.
-                  properties:
-                    approveStrategy:
-                      description: ApproveStrategy represents how to approve the addon
-                        registration.
-                      enum:
-                      - Auto
-                      - None
-                      type: string
-                    customSigner:
-                      description: KubeClient holds the configuration of the CustomSigner
-                        type registration required when the Type is CustomSigner
-                      properties:
-                        name:
-                          description: Name of the signer
-                          maxLength: 571
-                          minLength: 5
-                          type: string
-                        signingCA:
-                          description: SigningCARef represents the reference of the
-                            secret to sign the CSR
-                          properties:
-                            name:
-                              description: Name of the signing CA secret
-                              type: string
-                            namespace:
-                              description: Namespace of the signing CA secret
-                              type: string
-                          required:
-                          - name
-                          - namespace
-                          type: object
-                      required:
-                      - signingCA
-                      type: object
-                    kubeClient:
-                      description: KubeClient holds the configuration of the KubeClient
-                        type registration
-                      properties:
-                        permission:
-                          description: Permission represents the permission configuration
-                            of the addon agent to access the hub cluster
-                          properties:
-                            clusterRoleName:
-                              description: ClusterRoleName of the permission setting
-                                cluster role.
-                              type: string
-                            roleName:
-                              description: RoleName of the permission setting role
-                                in the same namespace as the managedClusterAddon.
-                              type: string
-                          type: object
-                      type: object
-                    type:
-                      description: Type of the registration configuration
-                      enum:
-                      - KubeClient
-                      - CustomSigner
-                      type: string
-                  required:
-                  - approveStrategy
-                  - type
-                  type: object
-                type: array
-            required:
-            - addonName
-            - agentManifests
-            - registration
-            type: object
-        required:
-        - spec
-        type: object
-    served: true
-    storage: true
-    subresources: {}
+    - additionalPrinterColumns:
+        - jsonPath: .spec.addonName
+          name: ADDON NAME
+          type: string
+      name: v1alpha1
+      schema:
+        openAPIV3Schema:
+          description: "AddOnTemplate is the Custom Resource object, it is used to describe how to deploy the addon agent and how to register the addon. \n AddOnTemplate is a cluster-scoped resource, and will only be used on the hub cluster."
+          type: object
+          required:
+            - spec
+          properties:
+            apiVersion:
+              description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+              type: string
+            kind:
+              description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: spec holds the registration configuration for the addon and the addon agent resources yaml description.
+              type: object
+              required:
+                - addonName
+                - agentManifests
+                - registration
+              properties:
+                addonName:
+                  description: AddonName represents the name of the addon which the template belongs to
+                  type: string
+                agentManifests:
+                  description: AgentManifests represents the kubernetes resources of the addon agent to be deployed on a managed cluster.
+                  type: array
+                  items:
+                    description: Manifest represents a resource to be deployed on the managed cluster.
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                    x-kubernetes-embedded-resource: true
+                registration:
+                  description: Registration holds the registration configuration for the addon
+                  type: array
+                  items:
+                    description: RegistrationSpec describes how to register an addon agent to the hub cluster. With the registration defined, The addon agent can access to kube apiserver with kube style API or other endpoints on hub cluster with client certificate authentication. During the addon registration process, a csr will be created for each RegistrationSpec on the hub cluster. The CSR can be approved automatically(Auto) or manually(None), After the csr is approved on the hub cluster, the klusterlet agent will create a secret in the installNamespace for the addon agent. If the RegistrationType type is KubeClient, the secret name will be "{addon name}-hub-kubeconfig" whose content includes key/cert and kubeconfig. Otherwise, If the RegistrationType type is CustomSigner the secret name will be "{addon name}-{signer name}-client-cert" whose content includes key/cert.
+                    type: object
+                    required:
+                      - approveStrategy
+                      - type
+                    properties:
+                      approveStrategy:
+                        description: ApproveStrategy represents how to approve the addon registration.
+                        type: string
+                        enum:
+                          - Auto
+                          - None
+                      customSigner:
+                        description: KubeClient holds the configuration of the CustomSigner type registration required when the Type is CustomSigner
+                        type: object
+                        required:
+                          - signingCA
+                        properties:
+                          name:
+                            description: Name of the signer
+                            type: string
+                            maxLength: 571
+                            minLength: 5
+                          signingCA:
+                            description: SigningCARef represents the reference of the secret to sign the CSR
+                            type: object
+                            required:
+                              - name
+                              - namespace
+                            properties:
+                              name:
+                                description: Name of the signing CA secret
+                                type: string
+                              namespace:
+                                description: Namespace of the signing CA secret
+                                type: string
+                      kubeClient:
+                        description: KubeClient holds the configuration of the KubeClient type registration
+                        type: object
+                        properties:
+                          permission:
+                            description: Permission represents the permission configuration of the addon agent to access the hub cluster
+                            type: object
+                            properties:
+                              clusterRoleName:
+                                description: ClusterRoleName of the permission setting cluster role.
+                                type: string
+                              roleName:
+                                description: RoleName of the permission setting role in the same namespace as the managedClusterAddon.
+                                type: string
+                      type:
+                        description: Type of the registration configuration
+                        type: string
+                        enum:
+                          - KubeClient
+                          - CustomSigner
+      served: true
+      storage: true
+      subresources: {}
 status:
   acceptedNames:
     kind: ""
