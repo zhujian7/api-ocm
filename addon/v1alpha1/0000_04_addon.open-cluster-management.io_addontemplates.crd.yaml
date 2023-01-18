@@ -58,28 +58,21 @@ spec:
                     description: RegistrationSpec describes how to register an addon agent to the hub cluster. With the registration defined, The addon agent can access to kube apiserver with kube style API or other endpoints on hub cluster with client certificate authentication. During the addon registration process, a csr will be created for each RegistrationSpec on the hub cluster. The CSR can be approved automatically(Auto) or manually(None), After the csr is approved on the hub cluster, the klusterlet agent will create a secret in the installNamespace for the addon agent. If the RegistrationType type is KubeClient, the secret name will be "{addon name}-hub-kubeconfig" whose content includes key/cert and kubeconfig. Otherwise, If the RegistrationType type is CustomSigner the secret name will be "{addon name}-{signer name}-client-cert" whose content includes key/cert.
                     type: object
                     required:
-                      - approveStrategy
                       - type
                     properties:
-                      approveStrategy:
-                        description: ApproveStrategy represents how to approve the addon registration.
-                        type: string
-                        enum:
-                          - Auto
-                          - None
                       customSigner:
                         description: KubeClient holds the configuration of the CustomSigner type registration required when the Type is CustomSigner
                         type: object
                         required:
                           - signingCA
                         properties:
-                          name:
-                            description: Name of the signer
+                          signerName:
+                            description: signerName is the name of signer that addon agent will use to create csr.
                             type: string
                             maxLength: 571
                             minLength: 5
                           signingCA:
-                            description: SigningCARef represents the reference of the secret to sign the CSR
+                            description: SigningCA represents the reference of the secret to sign the CSR
                             type: object
                             required:
                               - name
@@ -91,20 +84,68 @@ spec:
                               namespace:
                                 description: Namespace of the signing CA secret
                                 type: string
+                          subject:
+                            description: "Subject is the user subject of the addon agent to be registered to the hub. If it is not set, the addon agent will have the default subject \"subject\": { \t\"user\": \"system:open-cluster-management:addon:{addonName}:{clusterName}:{agentName}\", \t\"groups: [\"system:open-cluster-management:addon\", \"system:open-cluster-management:addon:{addonName}\", \"system:authenticated\"] }"
+                            type: object
+                            properties:
+                              groups:
+                                description: groups is the user group of the addon agent.
+                                type: array
+                                items:
+                                  type: string
+                              organizationUnit:
+                                description: organizationUnit is the ou of the addon agent
+                                type: array
+                                items:
+                                  type: string
+                              user:
+                                description: user is the user name of the addon agent.
+                                type: string
                       kubeClient:
                         description: KubeClient holds the configuration of the KubeClient type registration
                         type: object
                         properties:
                           permission:
                             description: Permission represents the permission configuration of the addon agent to access the hub cluster
-                            type: object
-                            properties:
-                              clusterRoleName:
-                                description: ClusterRoleName of the permission setting cluster role.
-                                type: string
-                              roleName:
-                                description: RoleName of the permission setting role in the same namespace as the managedClusterAddon.
-                                type: string
+                            type: array
+                            items:
+                              description: HubPermissionConfig configures the permission of the addon agent to access the hub cluster. Will create a RoleBinding in the same namespace as the managedClusterAddon to bind the user provided ClusterRole/Role to the "system:open-cluster-management:cluster:<cluster-name>:addon:<addon-name>" Group.
+                              type: object
+                              required:
+                                - roleRef
+                                - type
+                              properties:
+                                roleRef:
+                                  description: RoleRef is an reference to the permission resource. it could be a role or a cluster role, the user must make sure it exist on the hub cluster.
+                                  type: object
+                                  required:
+                                    - apiGroup
+                                    - kind
+                                    - name
+                                  properties:
+                                    apiGroup:
+                                      description: APIGroup is the group for the resource being referenced
+                                      type: string
+                                    kind:
+                                      description: Kind is the type of resource being referenced
+                                      type: string
+                                    name:
+                                      description: Name is the name of resource being referenced
+                                      type: string
+                                singleNamespace:
+                                  description: SingleNamespace contains the configuration of SingleNamespace type binding. It is required when the type is SingleNamespace
+                                  type: object
+                                  required:
+                                    - namespace
+                                  properties:
+                                    namespace:
+                                      type: string
+                                type:
+                                  description: Type of the permissions setting. It defines how to bind the roleRef
+                                  type: string
+                                  enum:
+                                    - CurrentCluster
+                                    - SingleNamespace
                       type:
                         description: Type of the registration configuration
                         type: string
